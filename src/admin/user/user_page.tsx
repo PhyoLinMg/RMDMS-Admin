@@ -1,30 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import UserTable from '../../components/UserTable';
-import { User } from '../../network/model/User';
+import { User } from '../../network/model/user';
+import { getUsers } from '../../network/user/network_get_all';
 
-const users: User[] = [
-    {
-        id: 1,
-        name: 'John Doe',
-        email: 'john@example.com',
-        role: 'owner'
-    },
-    {
-        id: 2,
-        name: 'John Foe',
-        email: 'john@example.com',
-        role: 'manager'
-    },
-    {
-        id: 3,
-        name: 'John Goe',
-        email: 'john@example.com',
-        role: 'tenant'
-    },
-
-];
 
 const UsersPage: React.FC = () => {
+
+    const [users, setUsers] = useState<User[] | null>(null);
+
+    useEffect(() => { 
+        async function fetchUsers() {
+          try {
+            const data = await getUsers();
+            console.log(data);
+            setUsers(data);
+          } catch (error) {
+            console.error('Failed to fetch projects:', error);
+            // Optionally set an error state here to show a message to the user
+          }
+        }
+        
+        fetchUsers();
+      }, []);   
+    if(!users) return <div>Loading...</div>;
     return (
         <div className="page-container">
             <h2>Users Management</h2>
@@ -32,7 +30,8 @@ const UsersPage: React.FC = () => {
 
             {/* Placeholder content */}
             <div className="content-placeholder">
-                <UserTable users={users} />
+                
+             <UserTable users={users} />
             </div>
         </div>
     );

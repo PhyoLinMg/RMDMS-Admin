@@ -1,4 +1,3 @@
-import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const UserTable = ({ users }) => {
@@ -29,11 +28,11 @@ const UserTable = ({ users }) => {
         <tbody>
           {users.map((user, index) => (
             <tr key={index}>
-              <td>{user.name}</td>
+              <td>{user.username}</td>
               <td>{user.email}</td>
               <td>
-                <span className={`badge bg-${getStatusBadgeColor(user.role)}`}>
-                  {user.role}
+                <span className={`badge bg-${getStatusBadgeColor(user.userRole)}`}>
+                  {user.userRole}
                 </span>
               </td>
               <td>

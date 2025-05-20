@@ -7,22 +7,25 @@ import './App.css';
 // Simple auth context
 export const AuthContext = React.createContext({
   isAuthenticated: false,
-  login: (token: string) => {},
+  login: (access: string, refresh: string) => {
+
+  },
   logout: () => {},
 });
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    !!localStorage.getItem('authToken')
+    !!localStorage.getItem('accessToken')
   );
 
-  const login = (token: string) => {
-    localStorage.setItem('authToken', token);
+  const login = (access: string, refresh: string) => {
+    localStorage.setItem('accessToken', access);
+    localStorage.setItem('refreshToken',refresh);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('accessToken');
     setIsAuthenticated(false);
   };
 

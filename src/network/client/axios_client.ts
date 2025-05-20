@@ -1,12 +1,23 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { refresh_token } from '../auth/network_login';
+
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
 
 class AxiosClient {
   private static instance: AxiosClient;
   private axiosInstance: AxiosInstance;
+  private isRefreshing: boolean = false;
+  private failedQueue: Array<{
+    resolve: (value?: any) => void;
+    reject: (reason?: any) => void;
+    config: CustomAxiosRequestConfig;
+  }> = [];
 
   private constructor() {
     this.axiosInstance = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
+      baseURL: process.env.REACT_APP_BASE_URL || 'http://localhost:3000/api',
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
@@ -23,12 +34,22 @@ class AxiosClient {
     return AxiosClient.instance;
   }
 
+  private processQueue(error: any = null, token: string | null = null): void {
+    this.failedQueue.forEach((prom) => {
+      if (error) {
+        prom.reject(error);
+      } else {
+        prom.resolve(token);
+      }
+    });
+    this.failedQueue = [];
+  }
+
   private setupInterceptors(): void {
     // Request interceptor
     this.axiosInstance.interceptors.request.use(
       (config) => {
-        // You can add auth token here
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -44,26 +65,49 @@ class AxiosClient {
       (response) => {
         return response;
       },
-      (error: AxiosError) => {
-        if (error.response) {
-          // Handle specific error status codes
-          switch (error.response.status) {
-            case 401:
-              // Handle unauthorized
-              localStorage.removeItem('token');
-              window.location.href = '/login';
-              break;
-            case 403:
-              // Handle forbidden
-              break;
-            case 404:
-              // Handle not found
-              break;
-            case 500:
-              // Handle server error
-              break;
+      async (error: AxiosError) => {
+        const originalRequest = error.config as CustomAxiosRequestConfig;
+        
+        if (error.response?.status === 401 && !originalRequest?._retry) {
+          if (this.isRefreshing) {
+            // If token refresh is in progress, add request to queue
+            return new Promise((resolve, reject) => {
+              console.log("pushing again");
+              this.failedQueue.push({ resolve, reject, config: originalRequest });
+            })
+              .then((token) => {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+                return this.axiosInstance(originalRequest);
+              })
+              .catch((err) => {
+                return Promise.reject(err);
+              });
+          }
+
+          originalRequest._retry = true;
+          this.isRefreshing = true;
+
+          try {
+            const tokens = await refresh_token();
+            console.log(tokens);
+            localStorage.setItem('accessToken', tokens.access_token);
+            localStorage.setItem('refreshToken', tokens.refresh_token);
+            
+            this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${tokens.access_token}`;
+            this.processQueue(null, tokens.access_token);
+            
+            return this.axiosInstance(originalRequest);
+          } catch (refreshError) {
+            this.processQueue(refreshError, null);
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            window.location.href = '/login';
+            return Promise.reject(refreshError);
+          } finally {
+            this.isRefreshing = false;
           }
         }
+
         return Promise.reject(error);
       }
     );
@@ -117,7 +161,7 @@ class AxiosClient {
         return new Error(errorMessage || 'An error occurred');
       } else if (axiosError.request) {
         // The request was made but no response was received
-        return new Error('No response received from server');
+        return new Error("No response received from server.");
       }
     }
     // Something happened in setting up the request that triggered an Error
