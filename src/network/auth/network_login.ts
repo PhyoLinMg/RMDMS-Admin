@@ -3,7 +3,7 @@ import { Tokens } from '../model/tokens';
 
 export async function auth_login(username: String, password: String): Promise<Tokens> {
     const response = await axiosClient.post<Tokens>("auth/login", JSON.stringify({ username, password }));
-    console.log(response.access_token);
+    console.log(response.accessToken);
     return response;
 }
 

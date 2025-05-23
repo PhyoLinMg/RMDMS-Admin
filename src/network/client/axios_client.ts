@@ -50,6 +50,7 @@ class AxiosClient {
     this.axiosInstance.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('accessToken');
+        console.log("token is ", token);
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -90,11 +91,11 @@ class AxiosClient {
           try {
             const tokens = await refresh_token();
             console.log(tokens);
-            localStorage.setItem('accessToken', tokens.access_token);
-            localStorage.setItem('refreshToken', tokens.refresh_token);
+            localStorage.setItem('accessToken', tokens.accessToken);
+            localStorage.setItem('refreshToken', tokens.refreshToken);
             
-            this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${tokens.access_token}`;
-            this.processQueue(null, tokens.access_token);
+            this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${tokens.accessToken}`;
+            this.processQueue(null, tokens.accessToken);
             
             return this.axiosInstance(originalRequest);
           } catch (refreshError) {

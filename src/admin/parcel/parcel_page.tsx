@@ -9,12 +9,7 @@ const ParcelsPage: React.FC = () => {
       {/* Placeholder content */}
       <div className="content-placeholder">
         <p>Parcel management features will be displayed here.</p>
-        <ul>
-          <li>Register new parcels</li>
-          <li>Track parcel status</li>
-          <li>View delivery history</li>
-          <li>Manage shipping details</li>
-        </ul>
+        
       </div>
     </div>
   );

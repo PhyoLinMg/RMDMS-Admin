@@ -8,9 +8,15 @@ import './App.css';
 export const AuthContext = React.createContext({
   isAuthenticated: false,
   login: (access: string, refresh: string) => {
-
+    console.log('access token from AuthContext:', access);
+    console.log('refresh token from AuthContext:', refresh);
+    localStorage.setItem('accessToken', access);
+    localStorage.setItem('refreshToken', refresh);
   },
-  logout: () => {},
+  logout: () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  }, 
 });
 
 const App: React.FC = () => {
@@ -19,6 +25,9 @@ const App: React.FC = () => {
   );
 
   const login = (access: string, refresh: string) => {
+    console.log('Login called');
+    console.log('Access Token:', access);
+    console.log('Refresh Token:', refresh);
     localStorage.setItem('accessToken', access);
     localStorage.setItem('refreshToken',refresh);
     setIsAuthenticated(true);

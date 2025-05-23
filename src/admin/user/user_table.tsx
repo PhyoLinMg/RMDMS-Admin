@@ -1,7 +1,14 @@
+import React from 'react';
+import { User } from '../../network/model/user';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const UserTable = ({ users }) => {
-  const getStatusBadgeColor = (role) => {
+interface UserTableProps {
+  users: User[];
+  onEdit?: (user: User) => void;
+}
+
+const UserTable: React.FC<UserTableProps> = ({ users, onEdit }) => {
+  const getStatusBadgeColor = (role: string) => {
     switch (role.toLowerCase()) {
       case 'owner':
         return 'danger';
@@ -26,8 +33,8 @@ const UserTable = ({ users }) => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
-            <tr key={index}>
+          {users.map((user) => (
+            <tr key={user.id}>
               <td>{user.username}</td>
               <td>{user.email}</td>
               <td>
@@ -38,7 +45,7 @@ const UserTable = ({ users }) => {
               <td>
                 <button 
                   className="btn btn-sm btn-outline-primary"
-                  onClick={() => user.onEdit && user.onEdit(user)}
+                  onClick={() => onEdit && onEdit(user)}
                 >
                   Edit
                 </button>
@@ -51,4 +58,4 @@ const UserTable = ({ users }) => {
   );
 };
 
-export default UserTable; 
+export default UserTable;

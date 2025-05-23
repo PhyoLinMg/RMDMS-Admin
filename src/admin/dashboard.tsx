@@ -6,6 +6,7 @@ import './dashboard.css';
 import RoomsPage from './room/room_page';
 import ParcelsPage from './parcel/parcel_page';
 import UsersPage from './user/user_page';
+import CreateRoomPage from './room/create_room_page';
 
 const Dashboard: React.FC = () => {
   const { logout } = useContext(AuthContext);
@@ -118,6 +119,7 @@ const Dashboard: React.FC = () => {
             <Route path="/rooms" element={<RoomsPage />} />
             <Route path="/parcels" element={<ParcelsPage />} />
             <Route path="/users" element={<UsersPage />} />
+            <Route path="/rooms/create" element={<CreateRoomPage />} />
           </Routes>
         </main>
       </div>

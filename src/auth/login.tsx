@@ -36,8 +36,8 @@ const LoginScreen: React.FC = () => {
     try {
 
       const response = await auth_login(formData.username, formData.password);
-    
-      login(response.access_token, response.refresh_token);
+      console.log('Login response:', response);
+      login(response.accessToken, response.refreshToken);
       navigate('/dashboard');
 
     } catch (err) {
