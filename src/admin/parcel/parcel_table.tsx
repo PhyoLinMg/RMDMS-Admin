@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Parcel } from '../../network/model/parcel';
+import { Root } from '../../network/model/parcel';
+import SearchDialog from './search_dialog';
+
 
 interface ParcelTableProps {
-  parcels: Parcel[];
+  parcelData: Root;
+  onPageChange: (page: number) => void;
+  onSearch: (searchParams: any) => void;
 }
 
-const ParcelTable: React.FC<ParcelTableProps> = ({ parcels }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const ParcelTable: React.FC<ParcelTableProps> = ({ parcelData, onPageChange, onSearch }) => {
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
 
   const getStatusBadgeColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -20,20 +24,15 @@ const ParcelTable: React.FC<ParcelTableProps> = ({ parcels }) => {
     }
   };
 
-  const filteredParcels = parcels.filter(parcel => 
-    parcel.roomDetails.roomNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div>
-      <div className="mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search by room number..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <div className="d-flex justify-content-between mb-3">
+        <button 
+          className="btn btn-primary" 
+          onClick={() => setIsSearchDialogOpen(true)}
+        >
+          Advanced Search
+        </button>
       </div>
 
       <div className="table-responsive">
@@ -48,7 +47,7 @@ const ParcelTable: React.FC<ParcelTableProps> = ({ parcels }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredParcels.map((parcel) => (
+            {parcelData.content.map((parcel) => (
               <tr key={parcel.id}>
                 <td>{parcel.recipientDetails.fullName}</td>
                 <td>{parcel.managerDetails.fullName}</td>
@@ -64,6 +63,45 @@ const ParcelTable: React.FC<ParcelTableProps> = ({ parcels }) => {
           </tbody>
         </table>
       </div>
+
+      <nav aria-label="Page navigation">
+        <ul className="pagination justify-content-center">
+          <li className={`page-item ${parcelData.first ? 'disabled' : ''}`}>
+            <button 
+              className="page-link" 
+              onClick={() => onPageChange(parcelData.number - 1)}
+              disabled={parcelData.first}
+            >
+              Previous
+            </button>
+          </li>
+          {[...Array(parcelData.totalPages)].map((_, index) => (
+            <li key={index} className={`page-item ${parcelData.number === index ? 'active' : ''}`}>
+              <button 
+                className="page-link" 
+                onClick={() => onPageChange(index)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
+          <li className={`page-item ${parcelData.last ? 'disabled' : ''}`}>
+            <button 
+              className="page-link" 
+              onClick={() => onPageChange(parcelData.number + 1)}
+              disabled={parcelData.last}
+            >
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <SearchDialog
+        isOpen={isSearchDialogOpen}
+        onClose={() => setIsSearchDialogOpen(false)}
+        onSearch={onSearch}
+      />
     </div>
   );
 };
