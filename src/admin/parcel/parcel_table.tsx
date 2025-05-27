@@ -49,10 +49,10 @@ const ParcelTable: React.FC<ParcelTableProps> = ({ parcelData, onPageChange, onS
           <tbody>
             {parcelData.content.map((parcel) => (
               <tr key={parcel.id}>
-                <td>{parcel.recipientDetails.fullName}</td>
-                <td>{parcel.managerDetails.fullName}</td>
+                <td>{parcel.recipientName}</td>
+                <td>{parcel.managerName}</td>
                 <td>{parcel.description}</td>
-                <td>{parcel.roomDetails.roomNumber}</td>
+                <td>{parcel.roomNumber}</td>
                 <td>
                   <span className={`badge bg-${getStatusBadgeColor(parcel.status)}`}>
                     {parcel.status}

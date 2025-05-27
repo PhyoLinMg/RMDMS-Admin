@@ -14,42 +14,16 @@ export interface Root {
   
   export interface Parcel {
     id: number
-    roomDetails: RoomDetails
-    recipientDetails: RecipientDetails
-    managerDetails: ManagerDetails
+    recipientName: string
+    managerName: string
     trackingNumber: string
     carrier: string
     description: string
     status: string
     deliveredAt: any
+    roomNumber: string
     collectedAt?: string
     createdAt: string
-  }
-  
-  export interface RoomDetails {
-    id: number
-    roomId: string
-    building: string
-    floor: string
-    roomNumber: string
-  }
-  
-  export interface RecipientDetails {
-    id: number
-    username: string
-    email: string
-    fullName: string
-    phone: any
-    userRole: string
-  }
-  
-  export interface ManagerDetails {
-    id: number
-    username: string
-    email: string
-    fullName: string
-    phone: string
-    userRole: string
   }
   
   export interface Pageable {

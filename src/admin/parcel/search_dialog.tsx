@@ -6,17 +6,13 @@ interface SearchDialogProps {
   onSearch: (searchParams: SearchParams) => void;
 }
 
-interface SearchParams {
+export interface SearchParams {
   roomNumber: string;
-  recipientName: string;
-  status: string;
 }
 
 const SearchDialog: React.FC<SearchDialogProps> = ({ isOpen, onClose, onSearch }) => {
   const [searchParams, setSearchParams] = React.useState<SearchParams>({
     roomNumber: '',
-    recipientName: '',
-    status: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,27 +41,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ isOpen, onClose, onSearch }
                   value={searchParams.roomNumber}
                   onChange={(e) => setSearchParams({...searchParams, roomNumber: e.target.value})}
                 />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Recipient Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={searchParams.recipientName}
-                  onChange={(e) => setSearchParams({...searchParams, recipientName: e.target.value})}
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Status</label>
-                <select 
-                  className="form-select"
-                  value={searchParams.status}
-                  onChange={(e) => setSearchParams({...searchParams, status: e.target.value})}
-                >
-                  <option value="">All</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="collected">Collected</option>
-                </select>
               </div>
             </div>
             <div className="modal-footer">
