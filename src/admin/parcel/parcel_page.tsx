@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Root } from '../../network/model/parcel';
 import ParcelTable from './parcel_table';
-import { getAllParcels } from '../../network/parcel/network_get_all_parcels';
+import { getAllParcels } from '../../network/parcel/parcel_service';
 import { SearchParams } from './search_dialog';
 import { useNavigate } from 'react-router';
 
@@ -48,6 +48,7 @@ const ParcelsPage: React.FC = () => {
           parcelData={parcelData}
           onPageChange={handlePageChange}
           onSearch={handleSearch}
+          disableSearch={false} // Enable search functionality
         />
       </div>
     </div>

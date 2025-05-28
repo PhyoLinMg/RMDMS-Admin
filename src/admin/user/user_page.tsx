@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserTable from './user_table';
 import { User } from '../../network/model/user';
-import { getUsers } from '../../network/user/network_get_all_users';
-
+import { getUsers } from '../../network/user/user_service';
 
 const UsersPage: React.FC = () => {
 

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Room } from '../../network/model/room';
-import { getAllRooms } from '../../network/room/network_get_all_rooms';
+import { getAllRooms } from '../../network/room/room_service';
 import RoomTable from './room_table';
 import { useNavigate } from 'react-router';
 

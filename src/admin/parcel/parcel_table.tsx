@@ -8,9 +8,10 @@ interface ParcelTableProps {
   parcelData: Root;
   onPageChange: (page: number) => void;
   onSearch: (searchParams: any) => void;
+  disableSearch?: boolean; // Optional prop to disable search
 }
 
-const ParcelTable: React.FC<ParcelTableProps> = ({ parcelData, onPageChange, onSearch }) => {
+const ParcelTable: React.FC<ParcelTableProps> = ({ parcelData, onPageChange, onSearch, disableSearch }) => {
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
 
   const getStatusBadgeColor = (status: string) => {
@@ -26,14 +27,16 @@ const ParcelTable: React.FC<ParcelTableProps> = ({ parcelData, onPageChange, onS
 
   return (
     <div>
-      <div className="d-flex justify-content-between mb-3">
-        <button 
-          className="btn btn-primary" 
-          onClick={() => setIsSearchDialogOpen(true)}
-        >
-          Advanced Search
-        </button>
-      </div>
+      {!disableSearch && (
+        <div className="d-flex justify-content-between mb-3">
+          <button 
+            className="btn btn-primary" 
+            onClick={() => setIsSearchDialogOpen(true)}
+          >
+            Advanced Search
+          </button>
+        </div>
+      )}
 
       <div className="table-responsive">
         <table className="table table-hover">
